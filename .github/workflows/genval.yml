@@ -5,10 +5,12 @@ on:
     paths:
       - 'gen-val/**'
     branches:
-      - '**' #all branches (Test)
+      - '**'  # all branches with relevant file changes
   pull_request:
     paths:
       - 'gen-val/**'
+  workflow_dispatch:  
+
 
 jobs:
   build-and-test:
