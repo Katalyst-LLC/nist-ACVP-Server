@@ -3,7 +3,7 @@ name: Build, Test, and Package GenVal
 on:
   push:
     paths:
-      - 'gen-val/**'
+      - '**'  # allow all files
     branches:
       - '**'  # all branches with relevant file changes
   pull_request:
