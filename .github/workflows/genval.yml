@@ -3,9 +3,9 @@ name: Build, Test, and Package GenVal
 on:
   push:
     paths:
-      - 'gen-val/**'
+      - '**'  # allow all files
     branches:
-      - master
+      - '**'  # all branches with relevant file changes
   workflow_dispatch:
 
 jobs:
