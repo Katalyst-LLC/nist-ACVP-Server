@@ -3,9 +3,9 @@ name: Build, Test, and Package GenVal
 on:
   push:
     paths:
-      - '**'  # allow all files
+      - '**'
     branches:
-      - '**'  # all branches with relevant file changes
+      - '**'
   workflow_dispatch:
 
 jobs:
@@ -13,85 +13,81 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - name: Checkout Repo
-      uses: actions/checkout@v3
+      - name: Checkout Repo
+        uses: actions/checkout@v3
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '9.0.x'
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
 
-    - name: Create Symbolic Links for Build Props
-      run: |
-        rm -f Directory.Build.props
-        rm -f Directory.Packages.props
-        ln -s ./_config/Directory.Build.props
-        ln -s ./_config/Directory.Packages.props
+      - name: Create Symbolic Links for Build Props
+        run: |
+          rm -f Directory.Build.props
+          rm -f Directory.Packages.props
+          ln -s ./_config/Directory.Build.props
+          ln -s ./_config/Directory.Packages.props
 
-    - name: Ensure sharedappsettings.json Exists
-      run: |
-        if [ ! -f gen-val/samples/sharedappsettings.json ]; then
-          echo '{}' > gen-val/samples/sharedappsettings.json
-        fi
+      - name: Ensure sharedappsettings.json Exists
+        run: |
+          if [ ! -f gen-val/samples/sharedappsettings.json ]; then
+            echo '{}' > gen-val/samples/sharedappsettings.json
+          fi
 
-    - name: Restore and Build GenVal App
-      run: |
-        dotnet restore gen-val/samples/GenValAppRunner/src
-        dotnet build gen-val/samples/GenValAppRunner/src --configuration Release
+      - name: Restore and Build GenVal App
+        run: |
+          dotnet restore gen-val/samples/GenValAppRunner/src
+          dotnet build gen-val/samples/GenValAppRunner/src --configuration Release
 
-    - name: Run Tests
-      run: |
-        dotnet test gen-val/samples/GenValAppRunner/test --configuration Release --no-build
+      - name: Run Tests
+        run: |
+          dotnet test gen-val/samples/GenValAppRunner/test --configuration Release --no-build
 
-    - name: Publish GenVal App for Packaging
-      run: |
-        dotnet publish gen-val/samples/GenValAppRunner/src \
-          -c Release \
-          -r osx-x64 \
-          --self-contained true \
-          -o out/genval
+      - name: Publish GenVal App for Packaging
+        run: |
+          dotnet publish gen-val/samples/GenValAppRunner/src \
+            -c Release \
+            -r osx-x64 \
+            --self-contained true \
+            -o out/genval
 
-    - name: Upload Published App as Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: genval-macos-package
-        path: out/genval
+      - name: Upload Published App as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: genval-macos-package
+          path: out/genval
 
   docker-package:
     runs-on: ubuntu-latest
     needs: build-and-test
 
-
     steps:
-    - name: Checkout Repo
-      uses: actions/checkout@v3
+      - name: Checkout Repo
+        uses: actions/checkout@v3
 
-    - name: Download Published App
-      uses: actions/download-artifact@v4
-      with:
-        name: genval-macos-package
-        path: app
+      - name: Download Published App
+        uses: actions/download-artifact@v4
+        with:
+          name: genval-macos-package
+          path: app
 
-    - name: Build Docker Image
-      run: docker build -t katalyst/genval:latest gen-val/samples/GenValAppRunner/src
+      - name: Build Docker Image
+        run: docker build -t katalyst/genval:latest gen-val/samples/GenValAppRunner/src
 
-    - name: Login to GHCR
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ${{ secrets.DOCKER_REGISTRY }} -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - name: Login to GHCR (Personal)
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ghcr.io -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
-    - name: Tag and Push Docker Image
-      if: env.DOCKER_USERNAME != '' && env.DOCKER_PASSWORD != ''
-      env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
-      run: |
-        docker tag katalyst/genval:latest $DOCKER_REGISTRY/katalyst-llc/genval:latest
-        docker push $DOCKER_REGISTRY/katalyst-llc/genval:latest
+      - name: Tag and Push Docker Image to Personal GHCR
+        env:
+          USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          docker tag katalyst/genval:latest ghcr.io/${USERNAME}/genval:latest
+          docker push ghcr.io/${USERNAME}/genval:latest
 
-    - name: Notify on Success
-      if: success()
-      run: echo " GenVal build, tests passed, and Docker image pushed to GHCR."
+      - name: Notify on Success
+        if: success()
+        run: echo "GenVal built, tested, and Docker image pushed to your personal GHCR."
 
-    - name: Notify on Failure
-      if: failure()
-      run: echo " GenVal pipeline failed during Docker packaging or push."
+      - name: Notify on Failure
+        if: failure()
+        run: echo "GenVal pipeline failed during Docker packaging or push."
