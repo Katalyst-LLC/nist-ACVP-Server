@@ -75,18 +75,21 @@ jobs:
         run: docker build -t katalyst/genval:latest gen-val/samples/GenValAppRunner/src
 
       - name: Login to GHCR (Personal)
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ghcr.io -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ghcr.io -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Tag and Push Docker Image to Personal GHCR
+      - name: Tag and Push Docker Image
         env:
-          USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          docker tag katalyst/genval:latest ghcr.io/${USERNAME}/genval:latest
-          docker push ghcr.io/${USERNAME}/genval:latest
+          USERNAME_LOWER=$(echo "${DOCKER_USERNAME:-${GITHUB_ACTOR}}" | tr '[:upper:]' '[:lower:]')
+          IMAGE_NAME="ghcr.io/$USERNAME_LOWER/genval:latest"
+          docker tag katalyst/genval:latest "$IMAGE_NAME"
+          docker push "$IMAGE_NAME"
 
       - name: Notify on Success
         if: success()
-        run: echo "GenVal built, tested, and Docker image pushed to your personal GHCR."
+        run: echo "GenVal built, tested, and Docker image pushed to GHCR."
 
       - name: Notify on Failure
         if: failure()
