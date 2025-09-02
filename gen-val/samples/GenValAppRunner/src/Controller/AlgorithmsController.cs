@@ -14,7 +14,7 @@ namespace GenValApp.Controllers
         {}
 
         [HttpGet()]
-        public IActionResult GetSupportedAlgorithms()
+        public IActionResult GetSupportedAlgorithms() 
         {
             try
             {

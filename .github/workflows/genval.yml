@@ -5,7 +5,7 @@ on:
     paths:
       - 'gen-val/**'
     branches:
-      - '*'  
+      - '**'  
   pull_request:
     paths:
       - 'gen-val/**'
@@ -87,8 +87,8 @@ jobs:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       run: |
-        docker tag katalyst/genval:latest ${{ secrets.DOCKER_REGISTRY }}/katalyst-llc/genval:latest
-        docker push ${{ secrets.DOCKER_REGISTRY }}/katalyst-llc/genval:latest
+        docker tag katalyst/genval:latest ghcr.io/katalyst-llc/genval:latest
+        docker push ghcr.io/katalyst-llc/genval:latest
 
     - name: Notify on Success
       if: success()
