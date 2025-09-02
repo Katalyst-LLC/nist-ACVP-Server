@@ -5,10 +5,11 @@ on:
     paths:
       - 'gen-val/**'
     branches:
-      - '*'
+      - '*'  
   pull_request:
     paths:
       - 'gen-val/**'
+  workflow_dispatch:
 
 jobs:
   build-and-test:
