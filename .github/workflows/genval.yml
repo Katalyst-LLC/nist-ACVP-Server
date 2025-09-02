@@ -5,7 +5,7 @@ on:
     paths:
       - 'gen-val/**'
     branches:
-      - master
+      - '*'
   pull_request:
     paths:
       - 'gen-val/**'
