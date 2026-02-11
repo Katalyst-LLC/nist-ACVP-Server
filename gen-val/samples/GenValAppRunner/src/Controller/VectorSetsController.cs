@@ -36,10 +36,6 @@ namespace GenValApp.Controllers
            {
              return BadRequest(ModelState);
            }
-
-           var answerString = JsonConvert.SerializeObject(request.Answer);
-           var expectedString = JsonConvert.SerializeObject(request.Expected);
-
            var response = await _vectorSetService.ValidateAsync(request);
 
            return Ok(response);
@@ -58,8 +54,6 @@ namespace GenValApp.Controllers
            {
              return BadRequest(ModelState);
            }
-           var registrationString = JsonConvert.SerializeObject(registration);
-      
            var response = await _vectorSetService.GenerateAsync(registration);
 
            return Ok(response);
