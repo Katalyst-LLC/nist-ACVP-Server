@@ -101,8 +101,9 @@ namespace NIST.CVP.ACVTS.Generation.GenValApp
                 var root = EntryPointConfigHelper.GetServiceProviderFromConfigurationBuilder();
                 return new AlgoModeContainerRegistry(root);
                 });
-
+                builder.Services.AddSingleton<IAlgoExecutionFactory, AlgoExecutionFactory>();
                 builder.Services.AddScoped<IVectorSetService, VectorSetService>();
+                builder.Services.AddSingleton<IAlgorithmInfoService, AlgorithmInfoService>();
                 builder.Services.AddControllers();
                 builder.Services.AddEndpointsApiExplorer(); // Enables Swagger endpoints
                 builder.Services.AddSwaggerGen();           // Registers Swagger generator

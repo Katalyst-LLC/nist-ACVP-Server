@@ -7,7 +7,6 @@ using NIST.CVP.ACVTS.Libraries.Generation.Core;
 using NIST.CVP.ACVTS.Libraries.Common.Helpers;
 using NIST.CVP.ACVTS.Generation.GenValApp.Helpers;
 using NIST.CVP.ACVTS.Libraries.Common;
-using NIST.CVP.ACVTS.Libraries.Common.Enums;
 using System.Threading;
 using System.Collections.Concurrent;
 using GenValAppRunner.DTO;

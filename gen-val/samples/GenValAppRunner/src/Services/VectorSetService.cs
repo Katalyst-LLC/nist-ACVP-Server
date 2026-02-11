@@ -7,7 +7,6 @@ using NIST.CVP.ACVTS.Libraries.Generation.Core;
 using NIST.CVP.ACVTS.Libraries.Common.Helpers;
 using NIST.CVP.ACVTS.Generation.GenValApp.Helpers;
 using NIST.CVP.ACVTS.Libraries.Common;
-using NIST.CVP.ACVTS.Libraries.Common.Enums;
 using System.Threading;
 using System.Collections.Concurrent;
 using Newtonsoft.Json;
@@ -26,11 +25,11 @@ using Autofac;
 
 public class VectorSetService : IVectorSetService
 {
-   private readonly IAlgoModeContainerRegistry _containerRegistry;
+    private readonly IAlgoExecutionFactory _factory;
 
-    public VectorSetService(IAlgoModeContainerRegistry containerRegistry)
+    public VectorSetService(IAlgoExecutionFactory factory)
     {
-        _containerRegistry = containerRegistry;
+        _factory = factory;
     }
 
     public async Task<VectorSetResponse> GenerateAsync(
@@ -41,9 +40,7 @@ public class VectorSetService : IVectorSetService
             "",
             registration.Revision);
 
-        using var scope = _containerRegistry.BeginScope(algoMode);
-        {
-        var generator = scope.Resolve<IGenerator>();
+        var generator = _factory.CreateGenerator(algoMode);
 
         var internalResponse = await generator.GenerateAsync(
             new GenerateRequest(JsonConvert.SerializeObject(registration)));
@@ -55,7 +52,7 @@ public class VectorSetService : IVectorSetService
             Result = JsonConvert.DeserializeObject<TestVectorSet>(
                 internalResponse.InternalProjection)
         };
-        }
+        
     }
 
     public async Task<ValidationResponse> ValidateAsync(
@@ -66,9 +63,7 @@ public class VectorSetService : IVectorSetService
             "",
             request.Answer.Revision);
 
-        using var scope = _containerRegistry.BeginScope(algoMode);
-        {
-        var validator = scope.Resolve<IValidator>();
+        var validator = _factory.CreateValidator(algoMode);
 
         var internalResponse = await validator.ValidateAsync(
             new ValidateRequest(
@@ -83,7 +78,6 @@ public class VectorSetService : IVectorSetService
             Result = JsonConvert.DeserializeObject<VectorSetValidationResults>(
                 internalResponse.ValidationResult)
         };
-        }
-    }
+    } 
     
 }
