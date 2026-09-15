@@ -10,15 +10,19 @@ namespace GenValApp.Controllers
     [Route("api/v1/algorithms")]
     public class AlgorithmsController : ControllerBase
     {
-        public AlgorithmsController()
-        {}
+     private readonly IAlgorithmInfoService _algorithmInfoService;
+
+     public AlgorithmsController(IAlgorithmInfoService algorithmInfoService)
+      {
+        _algorithmInfoService = algorithmInfoService;
+      }
 
         [HttpGet()]
         public IActionResult GetSupportedAlgorithms()
         {
             try
             {
-                var algoModes = AutofacConfig.GetSupportedAlgoModeInfos();
+                var algoModes = _algorithmInfoService.GetSupportedAlgorithms();
 
                 return Ok(algoModes);
             }
