@@ -14,7 +14,6 @@ using NIST.CVP.ACVTS.Libraries.Crypto.AES_FF;
 using NIST.CVP.ACVTS.Libraries.Crypto.ANSIX942;
 using NIST.CVP.ACVTS.Libraries.Crypto.ANSIX963;
 using NIST.CVP.ACVTS.Libraries.Crypto.CMAC;
-using NIST.CVP.ACVTS.Libraries.Crypto.Common;
 using NIST.CVP.ACVTS.Libraries.Crypto.Common.Asymmetric.DSA.ECC;
 using NIST.CVP.ACVTS.Libraries.Crypto.Common.Asymmetric.DSA.Ed;
 using NIST.CVP.ACVTS.Libraries.Crypto.Common.Asymmetric.DSA.FFC;
@@ -95,9 +94,10 @@ using NIST.CVP.ACVTS.Libraries.Crypto.KES;
 using NIST.CVP.ACVTS.Libraries.Crypto.KeyWrap;
 using NIST.CVP.ACVTS.Libraries.Crypto.KMAC;
 using NIST.CVP.ACVTS.Libraries.Crypto.KTS;
-using NIST.CVP.ACVTS.Libraries.Crypto.Kyber;
+using NIST.CVP.ACVTS.Libraries.Crypto.MLKEM;
 using NIST.CVP.ACVTS.Libraries.Crypto.LMS.Native;
 using NIST.CVP.ACVTS.Libraries.Crypto.LMS.Native.Keys;
+using NIST.CVP.ACVTS.Libraries.Crypto.Common.Asymmetric.XECDH;
 using NIST.CVP.ACVTS.Libraries.Crypto.ParallelHash;
 using NIST.CVP.ACVTS.Libraries.Crypto.PBKDF;
 using NIST.CVP.ACVTS.Libraries.Crypto.RSA;
@@ -117,6 +117,7 @@ using NIST.CVP.ACVTS.Libraries.Crypto.Symmetric.MonteCarlo;
 using NIST.CVP.ACVTS.Libraries.Crypto.TLS;
 using NIST.CVP.ACVTS.Libraries.Crypto.TPM;
 using NIST.CVP.ACVTS.Libraries.Crypto.TupleHash;
+using NIST.CVP.ACVTS.Libraries.Crypto.XECDH;
 using NIST.CVP.ACVTS.Libraries.Math;
 using NIST.CVP.ACVTS.Libraries.Math.Entropy;
 using NIST.CVP.ACVTS.Libraries.Oracle.Abstractions.ParameterTypes.Kas.Sp800_56Ar1;
@@ -153,7 +154,7 @@ namespace NIST.CVP.ACVTS.Libraries.Orleans.Grains
 
         private static void RegisterServices(IServiceCollection svc, OrleansConfig orleansConfig)
         {
-            svc.AddSingleton(new LimitedConcurrencyLevelTaskScheduler(GetOrleansNodeMaxConcurrency(orleansConfig)));
+            svc.AddSingleton(new LimitedConcurrencyLevelTaskScheduler(System.Math.Max(Environment.ProcessorCount - 2, 1)));
             svc.AddSingleton<IEntropyProviderFactory, EntropyProviderFactory>();
             svc.AddSingleton<IRandom800_90, Random800_90>();
             svc.AddSingleton<IEntropyProvider, EntropyProvider>();
@@ -260,6 +261,8 @@ namespace NIST.CVP.ACVTS.Libraries.Orleans.Grains
 
             svc.AddSingleton<IEdwardsCurveFactory, EdwardsCurveFactory>();
             svc.AddSingleton<IDsaEdFactory, DsaEdFactory>();
+            
+            svc.AddSingleton<IXecdhFactory, XecdhFactory>();
 
             svc.AddTransient<Crypto.Common.KDF.IKdfFactory, Crypto.KDF.KdfFactory>(); // Needs to be transient to account for KMAC in KMAC-KDF
 
@@ -315,30 +318,6 @@ namespace NIST.CVP.ACVTS.Libraries.Orleans.Grains
             #endregion Crypto Registrations
         }
 
-        private static int GetOrleansNodeMaxConcurrency(OrleansConfig orleansConfig)
-        {
-            var localIpAddress = GetLocalIpAddress();
 
-            var nodeConfig = orleansConfig.OrleansNodeConfig
-                .FirstOrDefault(f => f.HostName.Equals(localIpAddress, StringComparison.OrdinalIgnoreCase) ||
-                                     f.HostName.Equals("localhost", StringComparison.OrdinalIgnoreCase));
-
-            if (nodeConfig == null)
-            {
-                throw new Exception("Could not reconcile IP address of node. Ensure this node's IP address is listed within appsettings.[env].json under 'OrleansNodeConfig'");
-            }
-
-            return nodeConfig.MaxConcurrentWork;
-        }
-
-        private static string GetLocalIpAddress()
-        {
-            using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
-            {
-                socket.Connect("8.8.8.8", 65530);
-                IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
-                return endPoint?.Address.ToString();
-            }
-        }
     }
 }

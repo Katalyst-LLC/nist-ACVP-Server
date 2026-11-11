@@ -3,6 +3,7 @@ using NIST.CVP.ACVTS.Libraries.Crypto.Common.Asymmetric.RSA.Enums;
 using NIST.CVP.ACVTS.Libraries.Crypto.Common.Asymmetric.RSA.Keys;
 using NIST.CVP.ACVTS.Libraries.Crypto.Common.Asymmetric.RSA.PrimeGenerators;
 using NIST.CVP.ACVTS.Libraries.Generation.Core.Async;
+using NIST.CVP.ACVTS.Libraries.Math;
 using NIST.CVP.ACVTS.Libraries.Oracle.Abstractions;
 using NIST.CVP.ACVTS.Libraries.Oracle.Abstractions.ParameterTypes;
 using NIST.CVP.ACVTS.Libraries.Oracle.Abstractions.ResultTypes;
@@ -28,8 +29,8 @@ namespace NIST.CVP.ACVTS.Libraries.Generation.RSA.Fips186_5.KeyGen
                 Modulus = serverTestGroup.Modulo,
                 PrimeTest = serverTestGroup.PrimeTest,
                 PublicExponentMode = serverTestGroup.PubExp,
-                PublicExponent = serverTestGroup.FixedPubExp,
-                Seed = iutTestCase.Seed,
+                PublicExponent = new BitString(serverTestCase.E),
+                Seed = serverTestCase.Seed,
                 Standard = Fips186Standard.Fips186_5
             };
 
@@ -44,11 +45,11 @@ namespace NIST.CVP.ACVTS.Libraries.Generation.RSA.Fips186_5.KeyGen
                 fullParam.AuxValues = new AuxiliaryResult
                 {
                     XP = iutTestCase.XP.ToPositiveBigInteger(),
-                    XP1 = iutTestCase.XP1.ToPositiveBigInteger(),
-                    XP2 = iutTestCase.XP2.ToPositiveBigInteger(),
+                    XP1 = iutTestCase.XP1?.ToPositiveBigInteger() ?? 0,
+                    XP2 = iutTestCase.XP2?.ToPositiveBigInteger() ?? 0,
                     XQ = iutTestCase.XQ.ToPositiveBigInteger(),
-                    XQ1 = iutTestCase.XQ1.ToPositiveBigInteger(),
-                    XQ2 = iutTestCase.XQ2.ToPositiveBigInteger()
+                    XQ1 = iutTestCase.XQ1?.ToPositiveBigInteger() ?? 0,
+                    XQ2 = iutTestCase.XQ2?.ToPositiveBigInteger() ?? 0
                 };
             }
 

@@ -78,6 +78,12 @@ namespace NIST.CVP.ACVTS.Libraries.Common
         DRBG_Hash_v1_0,
         [EnumMember(Value = "hmacDRBG-1.0")]
         DRBG_HMAC_v1_0,
+        [EnumMember(Value = "ctrDRBG-SP800-90Ar1")]
+        ctrDRBG_SP800_90Ar1,
+        [EnumMember(Value = "hashDRBG-SP800-90Ar1")]
+        hashDRBG_SP800_90Ar1,
+        [EnumMember(Value = "hmacDRBG-SP800-90Ar1")]
+        hmacDRBG_SP800_90Ar1,
         [EnumMember(Value = "DSA-KeyGen-1.0")]
         DSA_KeyGen_v1_0,
         [EnumMember(Value = "DSA-PQGGen-1.0")]
@@ -235,6 +241,8 @@ namespace NIST.CVP.ACVTS.Libraries.Common
         KDFComponents_TPM_v1_0,
         [EnumMember(Value = "KDF-Components-ANSIX9.42-1.0")]
         KDFComponents_ANSIX942_v1_0,
+        [EnumMember(Value = "KDF-SPDM-1.0")]
+        KDF_SPDM_v1_0,
         [EnumMember(Value = "KMAC-128-1.0")]
         KMAC_128_v1_0,
         [EnumMember(Value = "KMAC-256-1.0")]
@@ -245,16 +253,24 @@ namespace NIST.CVP.ACVTS.Libraries.Common
         LMS_SigGen_v1_0,
         [EnumMember(Value = "LMS-SigVer-1.0")]
         LMS_SigVer_v1_0,
+        [EnumMember(Value = "LMS-SigGen-SP800-208")]
+        LMS_SigGen_SP800_208,
+        [EnumMember(Value = "LMS-SigVer-SP800-208")]
+        LMS_SigVer_SP800_208,
         [EnumMember(Value = "ML-DSA-KeyGen-FIPS204")]
         ML_DSA_KeyGen_FIPS204,
         [EnumMember(Value = "ML-DSA-SigGen-FIPS204")]
         ML_DSA_SigGen_FIPS204,
+        [EnumMember(Value = "ML-DSA-SigGen-FIPS204-tr1")]
+        ML_DSA_SigGen_FIPS204_tr1,
         [EnumMember(Value = "ML-DSA-SigVer-FIPS204")]
         ML_DSA_SigVer_FIPS204,
         [EnumMember(Value = "ML-KEM-KeyGen-FIPS203")]
         ML_KEM_KeyGen_FIPS203,
         [EnumMember(Value = "ML-KEM-EncapDecap-FIPS203")]
         ML_KEM_EncapDecap_FIPS203,
+        [EnumMember(Value = "ML-KEM-EncapDecap-FIPS203-tr1")]
+        ML_KEM_EncapDecap_FIPS203_tr1,
         [EnumMember(Value = "ParallelHash-128-1.0")]
         ParallelHash_128_v1_0,
         [EnumMember(Value = "ParallelHash-256-1.0")]
@@ -327,6 +343,12 @@ namespace NIST.CVP.ACVTS.Libraries.Common
         SHAKE_128_v1_0,
         [EnumMember(Value = "SHAKE-256-1.0")]
         SHAKE_256_v1_0,
+        [EnumMember(Value = "XECDH-keyGen-RFC7748")]
+        XECDH_KeyGen_RFC7748,
+        [EnumMember(Value = "XECDH-keyVer-RFC7748")]
+        XECDH_KeyVer_RFC7748,
+        [EnumMember(Value = "XECDH-SSC-RFC7748")]
+        XECDH_SSC_RFC7748,
         [EnumMember(Value = "SHAKE-128-FIPS202")]
         SHAKE_128_FIPS202,
         [EnumMember(Value = "SHAKE-256-FIPS202")]
