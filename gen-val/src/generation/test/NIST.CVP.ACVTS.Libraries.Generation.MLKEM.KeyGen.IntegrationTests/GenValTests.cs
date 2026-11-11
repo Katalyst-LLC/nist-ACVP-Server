@@ -1,6 +1,6 @@
 ﻿using NIST.CVP.ACVTS.Libraries.Common;
-using NIST.CVP.ACVTS.Libraries.Crypto.Common.PQC.Kyber;
-using NIST.CVP.ACVTS.Libraries.Generation.ML_KEM.FIPS203.KeyGen;
+using NIST.CVP.ACVTS.Libraries.Crypto.Common.PQC.MLKEM;
+using NIST.CVP.ACVTS.Libraries.Generation.ML_KEM.FIPS203.v1_0.KeyGen;
 using NIST.CVP.ACVTS.Libraries.Generation.Tests;
 using NIST.CVP.ACVTS.Libraries.Math;
 using NIST.CVP.ACVTS.Tests.Core.TestCategoryAttributes;
@@ -36,7 +36,7 @@ public class GenValTests : GenValTestsSingleRunnerBase
             Algorithm = Algorithm,
             Mode = Mode,
             Revision = Revision,
-            ParameterSets = new [] { KyberParameterSet.ML_KEM_512 },
+            ParameterSets = new [] { MLKEMParameterSet.ML_KEM_512 },
             IsSample = true
         };
 
